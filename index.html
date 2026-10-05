@@ -131,14 +131,33 @@
 
     /* PROJECTS */
     .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
-    .project-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 6px; padding: 2rem; transition: all 0.3s; position: relative; overflow: hidden; }
+    .project-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 6px; padding: 2rem; transition: box-shadow 0.3s, transform 0.3s; position: relative; overflow: hidden; display: flex; flex-direction: column; }
     .project-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent-light)); transform: scaleX(0); transform-origin: left; transition: transform 0.35s; }
     .project-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px var(--shadow); }
     .project-card:hover::before { transform: scaleX(1); }
     .project-year { font-size: 0.75rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.6rem; }
     .project-name { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 600; color: var(--slate); margin-bottom: 0.3rem; }
     .project-type { font-size: 0.78rem; color: var(--accent); font-weight: 500; margin-bottom: 1rem; }
-    .project-desc { font-size: 0.87rem; color: var(--slate-light); line-height: 1.7; }
+    .project-bullets { list-style: none; margin: 0; padding: 0; flex: 1; }
+    .project-bullets li { font-size: 0.87rem; color: var(--slate-light); line-height: 1.7; padding: 3px 0 3px 1.1rem; position: relative; }
+    .project-bullets li::before { content: '—'; position: absolute; left: 0; color: var(--accent-light); font-size: 0.75rem; top: 5px; }
+    /* collapsible bullet wrapper */
+    .project-body { position: relative; }
+    .project-body.collapsed .project-bullets { max-height: 112px; overflow: hidden; }
+    .project-body.collapsed::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 40px;
+      background: linear-gradient(transparent, var(--warm-white));
+      pointer-events: none;
+    }
+    .project-readmore {
+      margin-top: 0.9rem; background: none; border: none; padding: 0;
+      font-size: 0.8rem; font-weight: 600; color: var(--accent);
+      cursor: pointer; letter-spacing: 0.04em; display: flex; align-items: center; gap: 4px;
+      transition: color 0.2s;
+    }
+    .project-readmore:hover { color: var(--slate); }
+    .project-readmore svg { transition: transform 0.25s; }
+    .project-readmore.open svg { transform: rotate(180deg); }
 
     /* CERTIFICATES */
     .cert-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
@@ -541,16 +560,42 @@
   })();
 
   // ── PROJECTS ───────────────────────────────────────────────
+  const BULLETS_VISIBLE = 3; // how many bullets show before "Read more"
+
   (function renderProjects() {
     document.getElementById('projects-grid').innerHTML =
-      PORTFOLIO.projects.map(p => `
-        <div class="project-card reveal">
-          <div class="project-year">${p.year}</div>
-          <div class="project-name">${p.link ? `<a href="${p.link}" target="_blank" style="color:inherit;text-decoration:none">${p.name} ↗</a>` : p.name}</div>
-          <div class="project-type">${p.type}</div>
-          <div class="project-desc">${p.desc}</div>
-        </div>`).join('');
+      PORTFOLIO.projects.map((p, idx) => {
+        const bullets = p.bullets || (p.desc ? [p.desc] : []);
+        const needsMore = bullets.length > BULLETS_VISIBLE;
+        const listItems = bullets.map(b => `<li>${b}</li>`).join('');
+        const bodyClass = needsMore ? 'project-body collapsed' : 'project-body';
+        const readMoreBtn = needsMore
+          ? `<button class="project-readmore" onclick="toggleProject(this)" aria-expanded="false">
+               Read more
+               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+             </button>`
+          : '';
+        return `
+          <div class="project-card reveal">
+            <div class="project-year">${p.year}</div>
+            <div class="project-name">${p.link ? `<a href="${p.link}" target="_blank" style="color:inherit;text-decoration:none">${p.name} ↗</a>` : p.name}</div>
+            <div class="project-type">${p.type}</div>
+            <div class="${bodyClass}">
+              <ul class="project-bullets">${listItems}</ul>
+            </div>
+            ${readMoreBtn}
+          </div>`;
+      }).join('');
   })();
+
+  function toggleProject(btn) {
+    const body = btn.previousElementSibling;
+    const isCollapsed = body.classList.contains('collapsed');
+    body.classList.toggle('collapsed', !isCollapsed);
+    btn.classList.toggle('open', isCollapsed);
+    btn.childNodes[0].textContent = isCollapsed ? 'Read less ' : 'Read more ';
+    btn.setAttribute('aria-expanded', isCollapsed ? 'true' : 'false');
+  }
 
   // ── CERTIFICATES ───────────────────────────────────────────
   (function renderCerts() {

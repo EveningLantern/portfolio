@@ -72,47 +72,81 @@ const PORTFOLIO = {
   // ----------------------------------------------------------
   // PROJECTS
   // ----------------------------------------------------------
+  // Each project has a "bullets" array instead of a plain desc.
+  // Add as many bullet points as you want — if there are more than 3,
+  // a "Read more" button will appear automatically.
   projects: [
     {
-        year:  "2026",
-        name:  "AI video splitter with AWS bucket integration",
-        type:  "AI / Cloud Computing",
-        desc:  "CLERK authentication and authorization integrated with neon db. Implemented INGEST pipeline for video uploading. "
-
+      year:  "2026",
+      name:  "AI video splitter with AWS bucket integration",
+      type:  "AI & Cloud Computing",
+      bullets: [
+        "Authentication and authorization setup with Clerk and full access control using Neon DB.",
+        "Implemented Ingest Pipeline for video processing.",
+        "Integrated AWS S3 bucket for secure video storage and retrieval.",
+        "Developed a user-friendly interface for seamless video upload and management.",
+        
+      ],
+      link:  "",
     },
     {
       year:  "2024",
       name:  "Village Health",
       type:  "Healthcare Management System",
-      desc:  "Backend-driven healthcare platform built with Node.js and Express. Features role-based authentication, real-time notifications via Socket.io, and structured MongoDB storage.",
-      link:  "",   // optional: GitHub or live URL
+      bullets: [
+        "Backend-driven healthcare platform built with Node.js and Express.",
+        "Role-based authentication for patients, doctors, and admins.",
+        "Real-time notifications via Socket.io.",
+        "Structured MongoDB storage with optimised query patterns.",
+      ],
+      link:  "",
     },
     {
       year:  "2024",
       name:  "Auto Parts Pro",
       type:  "Backend System Development",
-      desc:  "Robust backend for an automotive parts catalog. Efficient REST APIs with optimized MongoDB queries supporting filtering, sorting, and full CRUD operations at scale.",
+      bullets: [
+        "Robust backend for an automotive parts catalog.",
+        "Efficient REST APIs with filtering, sorting, and pagination.",
+        "Full CRUD operations built to scale under high-volume requests.",
+        "MongoDB aggregation pipelines for complex parts lookups.",
+      ],
       link:  "",
     },
     {
       year:  "2023",
       name:  "GrowGrid",
       type:  "Community Reporting Platform",
-      desc:  "Cross-platform community reporting app built with Flutter and Firebase. Authentication, real-time data updates, and scalable state management.",
+      bullets: [
+        "Cross-platform app built with Flutter and Firebase.",
+        "Email/Google authentication with persistent sessions.",
+        "Real-time data updates using Firestore listeners.",
+        "Scalable state management with Provider pattern.",
+      ],
       link:  "",
     },
     {
       year:  "2025",
       name:  "Pathfinding Visualizer",
       type:  "Java / JavaFX — Algorithm Visualizer",
-      desc:  "Interactive visualizer implementing BFS, DFS, Dijkstra's, and A* on a grid. Built with JavaFX for smooth real-time rendering with weighted terrain and stats panel.",
+      bullets: [
+        "Visualises BFS, DFS, Dijkstra's, and A* on an interactive grid.",
+        "Built with JavaFX for smooth real-time rendering.",
+        "Supports weighted terrain and obstacle placement.",
+        "Live stats panel showing nodes explored and path length.",
+      ],
       link:  "",
     },
     {
       year:  "2025",
       name:  "VistaLex",
       type:  "Accessibility Platform · React",
-      desc:  "Hackathon-winning accessibility platform built with React. Led a 4-member team to deliver a cohesive product, securing 1st place at PRAYAS 2k25.",
+      bullets: [
+        "Hackathon-winning accessibility platform built with React.",
+        "Led a 4-member team under time-constrained conditions.",
+        "Delivered a cohesive, working product end-to-end.",
+        "Secured 1st place at PRAYAS 2k25.",
+      ],
       link:  "",
     },
   ],
