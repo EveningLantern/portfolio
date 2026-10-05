@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Data Editor</title>
+    <style>
+        :root {
+            --bg-color: #fdfbf7;
+            --card-bg: #f4efe6;
+            --card-border: #e6dfd1;
+            --text-main: #2c2a29;
+            --text-muted: #6b655f;
+            --accent: #5c544d;
+            --accent-hover: #3d3732;
+            --input-bg: #ffffff;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 30px 40px;
+            line-height: 1.5;
+        }
+
+        .container {
+            width: 100%;
+            max-width: none;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--card-border);
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            margin: 5px 0 0 0;
+            font-size: 0.95rem;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        button {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            font-size: 0.9rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        button.secondary {
+            background-color: transparent;
+            color: var(--accent);
+            border: 1px solid var(--card-border);
+        }
+
+        button.secondary:hover {
+            background-color: var(--card-bg);
+        }
+
+        /* Rounded rectangular menu bar for topics/tabs */
+        .tab-menu {
+            display: flex;
+            gap: 10px;
+            background-color: var(--card-bg);
+            padding: 8px;
+            border-radius: 30px;
+            border: 1px solid var(--card-border);
+            margin-bottom: 24px;
+            width: fit-content;
+        }
+
+        .tab-btn {
+            background: transparent;
+            color: var(--text-muted);
+            border: none;
+            padding: 8px 20px;
+            font-size: 0.9rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-main);
+            background-color: rgba(0, 0, 0, 0.03);
+        }
+
+        .tab-btn.active {
+            background-color: var(--accent);
+            color: white;
+        }
+
+        /* Tab Content Sections */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section-box {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            margin-top: 0;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .item-card {
+            background-color: var(--input-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--card-border);
+            border-radius: 4px;
+            background-color: var(--input-bg);
+            font-size: 0.95rem;
+            color: var(--text-main);
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        textarea {
+            resize: vertical;
+            height: 70px;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .row > .form-group {
+            flex: 1;
+        }
+
+        .remove-btn {
+            background: #d9534f;
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            font-size: 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            float: right;
+        }
+
+        .remove-btn:hover {
+            background: #c9302c;
+        }
+
+        .add-btn {
+            background: transparent;
+            color: var(--accent);
+            border: 1px dashed var(--accent);
+            width: 100%;
+            padding: 10px;
+            text-align: center;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .add-btn:hover {
+            background: rgba(0,0,0,0.03);
+        }
+
+        .bullet-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 6px;
+            align-items: center;
+        }
+
+        .bullet-row input {
+            flex: 1;
+        }
+
+        .bullet-row button {
+            background: #d9534f;
+            padding: 6px 10px;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div>
+            <h1>Portfolio Content Editor</h1>
+            <p class="subtitle">Modify Experience, Projects, and Tech Stack easily</p>
+        </div>
+        <div class="actions">
+            <button class="secondary" onclick="loadDataFile()">Load Current data.js</button>
+            <button onclick="saveData()">Download Updated data.js</button>
+        </div>
+    </header>
+
+    <!-- ROUNDED RECTANGLE MENU BAR -->
+    <div class="tab-menu">
+        <button class="tab-btn active" onclick="switchTab('experience', this)">Experience</button>
+        <button class="tab-btn" onclick="switchTab('projects', this)">Projects</button>
+        <button class="tab-btn" onclick="switchTab('techstack', this)">Tech Stack</button>
+    </div>
+
+    <!-- TAB 1: EXPERIENCE -->
+    <div id="tab-experience" class="tab-content active">
+        <div class="section-box">
+            <h2>Experience <button class="add-btn" style="width: auto; padding: 4px 12px; font-size: 0.8rem;" onclick="addExperience()">+ Add Experience</button></h2>
+            <div id="experience-container"></div>
+        </div>
+    </div>
+
+    <!-- TAB 2: PROJECTS (WORK) -->
+    <div id="tab-projects" class="tab-content">
+        <div class="section-box">
+            <h2>Projects (Work) <button class="add-btn" style="width: auto; padding: 4px 12px; font-size: 0.8rem;" onclick="addProject()">+ Add Project</button></h2>
+            <div id="projects-container"></div>
+        </div>
+    </div>
+
+    <!-- TAB 3: TECH STACK -->
+    <div id="tab-techstack" class="tab-content">
+        <div class="section-box">
+            <h2>Tech Stack Categories <button class="add-btn" style="width: auto; padding: 4px 12px; font-size: 0.8rem;" onclick="addTechCategory()">+ Add Category</button></h2>
+            <div id="techstack-container"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Load your local data.js script dynamically to populate forms -->
+<script src="data.js"></script>
+<script>
+    let currentPortfolio = typeof PORTFOLIO !== 'undefined' ? PORTFOLIO : null;
+
+    function loadDataFile() {
+        if (typeof PORTFOLIO !== 'undefined') {
+            currentPortfolio = JSON.parse(JSON.stringify(PORTFOLIO));
+            renderAll();
+            alert("Successfully loaded data from data.js!");
+        } else {
+            alert("Could not find data.js. Make sure admin.html is in the same folder as data.js.");
+        }
+    }
+
+    window.onload = function() {
+        if (currentPortfolio) {
+            renderAll();
+        } else {
+            console.warn("PORTFOLIO object not found on load.");
+        }
+    };
+
+    function renderAll() {
+        renderExperience();
+        renderProjects();
+        renderTechStack();
+    }
+
+    // --- TAB SWITCHER LOGIC ---
+    function switchTab(tabName, btnElement) {
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        // Remove active state from menu buttons
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        // Show selected tab and activate button
+        document.getElementById('tab-' + tabName).classList.add('active');
+        btnElement.classList.add('active');
+    }
+
+    // --- EXPERIENCE RENDERER ---
+    function renderExperience() {
+        const container = document.getElementById('experience-container');
+        container.innerHTML = '';
+        if(!currentPortfolio || !currentPortfolio.experience) return;
+        
+        currentPortfolio.experience.forEach((exp, index) => {
+            let bulletsHtml = exp.bullets.map((b, bIdx) => `
+                <div class="bullet-row">
+                    <input type="text" value="${b}" onchange="updateExpBullet(${index}, ${bIdx}, this.value)">
+                    <button onclick="removeExpBullet(${index}, ${bIdx})">X</button>
+                </div>
+            `).join('');
+
+            const card = document.createElement('div');
+            card.className = 'item-card';
+            card.innerHTML = `
+                <button class="remove-btn" onclick="removeExperience(${index})">Delete Experience</button>
+                <div class="row">
+                    <div class="form-group">
+                        <label>Role</label>
+                        <input type="text" value="${exp.role}" onchange="currentPortfolio.experience[${index}].role = this.value">
+                    </div>
+                    <div class="form-group">
+                        <label>Organization / Event</label>
+                        <input type="text" value="${exp.org}" onchange="currentPortfolio.experience[${index}].org = this.value">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Date / Location</label>
+                    <input type="text" value="${exp.date}" onchange="currentPortfolio.experience[${index}].date = this.value">
+                </div>
+                <label>Bullet Points</label>
+                <div id="exp-bullets-${index}">${bulletsHtml}</div>
+                <button class="add-btn" style="margin-top: 8px;" onclick="addExpBullet(${index})">+ Add Bullet</button>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function addExperience() {
+        currentPortfolio.experience.push({ role: "New Role", org: "Organization", date: "2026", bullets: ["New bullet point"] });
+        renderExperience();
+    }
+    function removeExperience(index) {
+        currentPortfolio.experience.splice(index, 1);
+        renderExperience();
+    }
+    function updateExpBullet(expIdx, bIdx, val) {
+        currentPortfolio.experience[expIdx].bullets[bIdx] = val;
+    }
+    function removeExpBullet(expIdx, bIdx) {
+        currentPortfolio.experience[expIdx].bullets.splice(bIdx, 1);
+        renderExperience();
+    }
+    function addExpBullet(expIdx) {
+        currentPortfolio.experience[expIdx].bullets.push("New detail");
+        renderExperience();
+    }
+
+    // --- PROJECTS RENDERER ---
+    function renderProjects() {
+        const container = document.getElementById('projects-container');
+        container.innerHTML = '';
+        if(!currentPortfolio || !currentPortfolio.projects) return;
+
+        currentPortfolio.projects.forEach((proj, index) => {
+            let bulletsHtml = proj.bullets.map((b, bIdx) => `
+                <div class="bullet-row">
+                    <input type="text" value="${b}" onchange="updateProjBullet(${index}, ${bIdx}, this.value)">
+                    <button onclick="removeProjBullet(${index}, ${bIdx})">X</button>
+                </div>
+            `).join('');
+
+            const card = document.createElement('div');
+            card.className = 'item-card';
+            card.innerHTML = `
+                <button class="remove-btn" onclick="removeProject(${index})">Delete Project</button>
+                <div class="row">
+                    <div class="form-group" style="flex: 2;">
+                        <label>Project Name</label>
+                        <input type="text" value="${proj.name}" onchange="currentPortfolio.projects[${index}].name = this.value">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Year</label>
+                        <input type="text" value="${proj.year}" onchange="currentPortfolio.projects[${index}].year = this.value">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group" style="flex: 2;">
+                        <label>Type / Subtitle</label>
+                        <input type="text" value="${proj.type}" onchange="currentPortfolio.projects[${index}].type = this.value">
+                    </div>
+                    <div class="form-group" style="flex: 2;">
+                        <label>Link (optional)</label>
+                        <input type="text" value="${proj.link || ''}" onchange="currentPortfolio.projects[${index}].link = this.value">
+                    </div>
+                </div>
+                <label>Bullet Points</label>
+                <div id="proj-bullets-${index}">${bulletsHtml}</div>
+                <button class="add-btn" style="margin-top: 8px;" onclick="addProjBullet(${index})">+ Add Bullet</button>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function addProject() {
+        currentPortfolio.projects.unshift({ year: "2026", name: "New Project", type: "Web App", bullets: ["Project description bullet"], link: "" });
+        renderProjects();
+    }
+    function removeProject(index) {
+        currentPortfolio.projects.splice(index, 1);
+        renderProjects();
+    }
+    function updateProjBullet(pIdx, bIdx, val) {
+        currentPortfolio.projects[pIdx].bullets[bIdx] = val;
+    }
+    function removeProjBullet(pIdx, bIdx) {
+        currentPortfolio.projects[pIdx].bullets.splice(bIdx, 1);
+        renderProjects();
+    }
+    function addProjBullet(pIdx) {
+        currentPortfolio.projects[pIdx].bullets.push("New detail");
+        renderProjects();
+    }
+
+    // --- TECH STACK RENDERER ---
+    function renderTechStack() {
+        const container = document.getElementById('techstack-container');
+        container.innerHTML = '';
+        if(!currentPortfolio || !currentPortfolio.techStack) return;
+
+        currentPortfolio.techStack.forEach((cat, cIdx) => {
+            let itemsHtml = cat.items.map((item, iIdx) => `
+                <div style="display: flex; gap: 8px; margin-bottom: 6px; align-items: center;">
+                    <input type="text" value="${item.name}" placeholder="Tech Name" onchange="currentPortfolio.techStack[${cIdx}].items[${iIdx}].name = this.value" style="flex: 2;">
+                    <input type="text" value="${item.color}" placeholder="#HexColor" onchange="currentPortfolio.techStack[${cIdx}].items[${iIdx}].color = this.value" style="flex: 1;">
+                    <button class="remove-btn" style="float: none;" onclick="removeTechItem(${cIdx}, ${iIdx})">X</button>
+                </div>
+            `).join('');
+
+            const card = document.createElement('div');
+            card.className = 'item-card';
+            card.innerHTML = `
+                <button class="remove-btn" onclick="removeTechCategory(${cIdx})">Delete Category</button>
+                <div class="form-group">
+                    <label>Category Name</label>
+                    <input type="text" value="${cat.category}" onchange="currentPortfolio.techStack[${cIdx}].category = this.value" style="max-width: 50%;">
+                </div>
+                <label>Tech Items & Colors</label>
+                <div>${itemsHtml}</div>
+                <button class="add-btn" style="margin-top: 8px;" onclick="addTechItem(${cIdx})">+ Add Tech Item</button>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function addTechCategory() {
+        currentPortfolio.techStack.push({ category: "New Category", items: [{ name: "Tool", color: "#444444" }] });
+        renderTechStack();
+    }
+    function removeTechCategory(cIdx) {
+        currentPortfolio.techStack.splice(cIdx, 1);
+        renderTechStack();
+    }
+    function addTechItem(cIdx) {
+        currentPortfolio.techStack[cIdx].items.push({ name: "New Tech", color: "#333333" });
+        renderTechStack();
+    }
+    function removeTechItem(cIdx, iIdx) {
+        currentPortfolio.techStack[cIdx].items.splice(iIdx, 1);
+        renderTechStack();
+    }
+
+    // --- SAVE / EXPORT ---
+    function saveData() {
+        if (!currentPortfolio) {
+            alert("No data loaded to save!");
+            return;
+        }
+
+        const fileContent = `// ============================================================
+// data.js — Edit this file to update your portfolio content.
+// No need to touch index.html for content changes.
+// ============================================================
+
+const PORTFOLIO = ${JSON.stringify(currentPortfolio, null, 2)};
+`;
+
+        const blob = new Blob([fileContent], { type: 'text/javascript' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'data.js';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+</script>
+
+</body>
+</html>
